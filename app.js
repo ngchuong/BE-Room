@@ -65,9 +65,19 @@ app.get("/manage/room", (req, res) => {
 });
 
 app.post("/manage/room", (req, res) => {
-  const {} = req.body;
+  const {
+    title,
+    arr_image,
+    address,
+    acreage,
+    bed,
+    bethroom,
+    price,
+    id_user,
+    type_room,
+  } = req.body;
 
-  const sql_create_room = `INSERT INTO rooms (username, email, password, role) VALUES ('${username}', '${email}', '${password}', 1)`;
+  const sql_create_room = `INSERT INTO rooms (id, title, address, acreage, bathroom, bed, phoneNumber, price, path, typeRoom, isActive, created) VALUES ('${username}', '${email}', '${password}', 1)`;
 
   database.query(sql_create_room, (err, result) => {
     if (err)
@@ -129,9 +139,9 @@ app.get("/manage/user", (req, res) => {
 });
 
 app.post("/manage/user", (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { name, phone_number, email, password } = req.body;
 
-  const sql_create_user = `INSERT INTO users (username, email, password, role) VALUES ('${username}', '${email}', '${password}', '${role})`;
+  const sql_create_user = `INSERT INTO users (username, phone_number, email, password, role) VALUES ('${name}', '${phone_number}', '${email}', '${password}', '2')`;
   database.query(sql_create_user, (err, result) => {
     if (err)
       res.status(400).send({
@@ -143,10 +153,25 @@ app.post("/manage/user", (req, res) => {
     res.send({ status: 200, text: "Create user success" });
   });
 });
-app.patch("/manage/user:id", (req, res) => {});
+app.patch("/manage/user:id", (req, res) => {
+  const id = req.params.id;
+  const { name, phone_number, email, password } = req.body;
+
+  const sql_create_user = `UPDATE users SET name = ${name}, phone_number=${phone_number}, email=${email}, password=${password} WHERE id = '${id}'`;
+  database.query(sql_create_user, (err, result) => {
+    if (err)
+      res.status(400).send({
+        status: 400,
+        error: err,
+        text: "Update user failed",
+      });
+
+    res.send({ status: 200, text: "Update user success" });
+  });
+});
 app.delete("/manage/user:id", (req, res) => {
   const id = req.params.id;
-  
+
   const sql = `DELETE FROM users WHERE id = '${id}'`;
   database.query(sql, (err, result) => {
     if (err)
